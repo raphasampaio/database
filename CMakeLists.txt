@@ -1,39 +1,77 @@
-cmake_minimum_required (VERSION 3.1)
-project(Example LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.14)
 
-# Use C++11
-set(CMAKE_CXX_STANDARD 11)
-# Require (at least) it
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# Don't use e.g. GNU extension (like -std=gnu++11) for portability
-set(CMAKE_CXX_EXTENSIONS OFF)
+include(cmake/prelude.cmake)
 
-# Code Coverage Configuration
-add_library(coverage_config INTERFACE)
+project(
+    psr_database
+    VERSION 0.1.0
+    DESCRIPTION "Short description"
+    HOMEPAGE_URL "https://github.com/psrenergy/database"
+    LANGUAGES CXX
+)
 
-option(CODE_COVERAGE "Enable coverage reporting" OFF)
-if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-  # Add required flags (GCC & LLVM/Clang)
-  target_compile_options(coverage_config INTERFACE
-    -O0        # no optimization
-    -g         # generate debug info
-    --coverage # sets all required flags
-  )
-  if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
-    target_link_options(coverage_config INTERFACE --coverage)
-  else()
-    target_link_libraries(coverage_config INTERFACE --coverage)
-  endif()
-endif(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+include(cmake/project-is-top-level.cmake)
+include(cmake/variables.cmake)
 
+# ---- Declare library ----
 
-add_subdirectory(src)
+add_library(
+    psr_database_psr_database
+    source/psr_database.cpp
+)
+add_library(psr_database::psr_database ALIAS psr_database_psr_database)
 
-option (BUILD_TESTING "Build the testing tree." ON)
-# Only build tests if we are the top-level project
-# Allows this to be used by super projects with `add_subdirectory`
-if (BUILD_TESTING AND (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR))
-  enable_testing()
-  add_subdirectory(tests)
+include(GenerateExportHeader)
+generate_export_header(
+    psr_database_psr_database
+    BASE_NAME psr_database
+    EXPORT_FILE_NAME export/psr_database/psr_database_export.hpp
+    CUSTOM_CONTENT_FROM_VARIABLE pragma_suppress_c4251
+)
+
+if(NOT BUILD_SHARED_LIBS)
+  target_compile_definitions(psr_database_psr_database PUBLIC PSR_DATABASE_STATIC_DEFINE)
 endif()
 
+set_target_properties(
+    psr_database_psr_database PROPERTIES
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN YES
+    VERSION "${PROJECT_VERSION}"
+    SOVERSION "${PROJECT_VERSION_MAJOR}"
+    EXPORT_NAME psr_database
+    OUTPUT_NAME psr_database
+)
+
+target_include_directories(
+    psr_database_psr_database ${warning_guard}
+    PUBLIC
+    "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+)
+
+target_include_directories(
+    psr_database_psr_database SYSTEM
+    PUBLIC
+    "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
+)
+
+target_compile_features(psr_database_psr_database PUBLIC cxx_std_17)
+
+# ---- Install rules ----
+
+if(NOT CMAKE_SKIP_INSTALL_RULES)
+  include(cmake/install-rules.cmake)
+endif()
+
+# ---- Developer mode ----
+
+if(NOT psr_database_DEVELOPER_MODE)
+  return()
+elseif(NOT PROJECT_IS_TOP_LEVEL)
+  message(
+      AUTHOR_WARNING
+      "Developer mode is intended for developers of psr_database"
+  )
+endif()
+
+include(cmake/dev-mode.cmake)
