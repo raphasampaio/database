@@ -1,15 +1,3 @@
 # psr_database
 
-This is the psr_database project.
-
-# Building and installing
-
-See the [BUILDING](BUILDING.md) document.
-
-# Licensing
-
-<!--
-Please go to https://choosealicense.com/licenses/ and choose a license that
-fits your needs. The recommended license for a project of this type is the
-Boost Software License 1.0.
--->
+[![codecov](https://codecov.io/gh/raphasampaio/database/graph/badge.svg?token=naQ3INKLPl)](https://codecov.io/gh/raphasampaio/database)
