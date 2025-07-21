@@ -29,7 +29,6 @@ FetchContent_MakeAvailable(sqlite3)
 
 add_library(
     psr_database_psr_database
-    source/psr_database.cpp
     source/database.cpp
     ${sqlite3_SOURCE_DIR}/sqlite3.c
 )
