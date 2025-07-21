@@ -7,17 +7,31 @@ project(
     VERSION 0.1.0
     DESCRIPTION "Short description"
     HOMEPAGE_URL "https://github.com/psrenergy/database"
-    LANGUAGES CXX
+    LANGUAGES CXX C
 )
 
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
+
+# ---- Find dependencies ----
+
+include(FetchContent)
+
+FetchContent_Declare(
+    sqlite3
+    URL https://sqlite.org/2024/sqlite-amalgamation-3460000.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+
+FetchContent_MakeAvailable(sqlite3)
 
 # ---- Declare library ----
 
 add_library(
     psr_database_psr_database
     source/psr_database.cpp
+    source/database.cpp
+    ${sqlite3_SOURCE_DIR}/sqlite3.c
 )
 add_library(psr_database::psr_database ALIAS psr_database_psr_database)
 
@@ -47,6 +61,8 @@ target_include_directories(
     psr_database_psr_database ${warning_guard}
     PUBLIC
     "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+    PRIVATE
+    ${sqlite3_SOURCE_DIR}
 )
 
 target_include_directories(
@@ -56,6 +72,14 @@ target_include_directories(
 )
 
 target_compile_features(psr_database_psr_database PUBLIC cxx_std_17)
+
+# Add SQLite3 compile definitions
+target_compile_definitions(psr_database_psr_database PRIVATE
+    SQLITE_ENABLE_FTS4=1
+    SQLITE_ENABLE_FTS5=1
+    SQLITE_ENABLE_RTREE=1
+    SQLITE_ENABLE_JSON1=1
+)
 
 # ---- Install rules ----
 
@@ -75,3 +99,7 @@ elseif(NOT PROJECT_IS_TOP_LEVEL)
 endif()
 
 include(cmake/dev-mode.cmake)
+
+# ---- Examples ----
+
+add_subdirectory(examples)

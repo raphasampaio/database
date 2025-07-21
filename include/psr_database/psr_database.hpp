@@ -3,6 +3,7 @@
 #include <string>
 
 #include "psr_database/psr_database_export.hpp"
+#include "psr_database/database.hpp"
 
 /**
  * A note about the MSVC warning C4251:
@@ -47,8 +48,9 @@
  */
 
 /**
- * @brief Reports the name of the library
+ * @brief Reports the name of the library and provides database functionality
  *
+ * This class now includes SQLite3 database integration for demonstration.
  * Please see the note above for considerations when creating shared libraries.
  */
 class PSR_DATABASE_EXPORT exported_class
@@ -63,6 +65,13 @@ public:
    * @brief Returns a non-owning pointer to the string stored in this class
    */
   auto name() const -> char const*;
+  
+  /**
+   * @brief Create a sample database and perform basic operations
+   * 
+   * @return true if database operations were successful, false otherwise
+   */
+  bool demo_database_operations() const;
 
 private:
   PSR_DATABASE_SUPPRESS_C4251

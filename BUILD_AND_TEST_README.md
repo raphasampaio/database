@@ -71,21 +71,25 @@ build-and-test.bat Debug clean
 - **CMake** (version 3.14 or higher)
 - **Visual Studio 2019** (or Visual Studio Build Tools)
 - **Windows SDK** (automatically selected by CMake)
+- **Internet connection** (for downloading SQLite3 source during first build)
 
 ## What the Scripts Do
 
 1. **Validate Environment**: Check that `CMakeLists.txt` exists in the current directory
 2. **Clean Build** (if requested): Remove the existing `build` directory
-3. **Configure**: Run CMake configuration with Visual Studio 2019 generator
-4. **Build**: Compile the project in the specified configuration
-5. **Test**: Run the test suite using CTest
-6. **Verify**: Execute the test binary directly to confirm it works
+3. **Download SQLite3**: Automatically download and configure SQLite3 source (first build only)
+4. **Configure**: Run CMake configuration with Visual Studio 2019 generator
+5. **Build**: Compile the project and SQLite3 in the specified configuration
+6. **Test**: Run the test suite using CTest (includes SQLite3 functionality tests)
+7. **Verify**: Execute the test binary directly to confirm it works
 
 ## Output
 
 The scripts will create a `build` directory containing:
-- `Release/` or `Debug/`: Compiled library (`psr_database.lib`)
+- `Release/` or `Debug/`: Compiled library (`psr_database.lib`) with SQLite3 integration
 - `test/Release/` or `test/Debug/`: Test executable (`psr_database_test.exe`)
+- `_deps/sqlite3-src/`: Downloaded SQLite3 source files
+- `_deps/sqlite3-build/`: Compiled SQLite3 library
 
 ## Troubleshooting
 
@@ -143,6 +147,37 @@ Verbose tests: False
 
 ✅ Build and test process completed successfully!
 ```
+
+## SQLite3 Integration
+
+This project now includes SQLite3 database functionality:
+
+### Features
+- **In-memory and file-based databases**: Support for both `:memory:` and file-based SQLite databases
+- **RAII Database wrapper**: Automatic resource management with C++ semantics
+- **Transaction support**: Both automatic (RAII) and manual transaction management
+- **Comprehensive error handling**: Detailed error messages and status checking
+- **Modern C++ interface**: Uses C++17 features, move semantics, and RAII principles
+- **SQLite extensions**: Includes FTS4, FTS5, RTREE, and JSON1 extensions
+
+### Usage Example
+```cpp
+#include "psr_database/database.hpp"
+
+// Create database and perform operations
+psr_database::Database db(":memory:");
+db.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)");
+
+{
+    psr_database::Transaction trans(db);
+    db.execute("INSERT INTO users (name) VALUES ('John')");
+    trans.commit();
+}
+
+auto results = db.query("SELECT * FROM users");
+```
+
+See `SQLITE_EXAMPLE.md` for detailed usage examples.
 
 ## Integration with Development Workflow
 
