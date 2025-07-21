@@ -6,10 +6,6 @@ This is the psr_database project.
 
 See the [BUILDING](BUILDING.md) document.
 
-# Contributing
-
-See the [CONTRIBUTING](CONTRIBUTING.md) document.
-
 # Licensing
 
 <!--
