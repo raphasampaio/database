@@ -1,25 +1,22 @@
-#include "psr_database/collection.hpp"
-#include <sqlite3.h>
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 
-namespace psr_database {
+#include "psr_database/collection.hpp"
 
-Collection::Collection()
-    {
-}
+#include <sqlite3.h>
 
-Collection::~Collection()
+namespace psr_database
 {
-}
 
-Collection::Collection(Collection&& other) noexcept
-{
-}
+Collection::Collection() {}
+
+Collection::~Collection() {}
+
+Collection::Collection(Collection&& other) noexcept {}
 
 Collection& Collection::operator=(Collection&& other) noexcept
 {
-    return *this;
+  return *this;
 }
 
-} // namespace psr_database
+}  // namespace psr_database
