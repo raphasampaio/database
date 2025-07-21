@@ -12,13 +12,6 @@ struct sqlite3_stmt;
 
 namespace psr_database {
 
-/**
- * @brief A simple wrapper around SQLite3 database
- * 
- * This class provides a C++ interface to SQLite3 database operations,
- * including opening/closing databases, executing SQL statements,
- * and handling prepared statements.
- */
 class PSR_DATABASE_EXPORT Database
 {
 public:
