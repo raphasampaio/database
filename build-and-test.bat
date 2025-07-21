@@ -65,16 +65,15 @@ echo All tests passed!
 
 REM Run the test executable directly
 echo =^> Running test executable directly
-set "TEST_EXE=build\test\%CONFIG%\psr_database_test.exe"
-if exist "%TEST_EXE%" (
-    "%TEST_EXE%"
+if exist "build\test\%CONFIG%\psr_database_test.exe" (
+    "build\test\%CONFIG%\psr_database_test.exe"
     if errorlevel 1 (
         echo Warning: Direct test execution returned error code !errorlevel!
     ) else (
         echo Direct test execution completed successfully (exit code: 0)
     )
 ) else (
-    echo Warning: Test executable not found at: %TEST_EXE%
+    echo Warning: Test executable not found at: build\test\%CONFIG%\psr_database_test.exe
 )
 
 echo.
